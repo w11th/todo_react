@@ -4,20 +4,18 @@ import {connect} from 'react-redux';
 /* import {bindActionCreators} from 'redux';*/
 
 import TodoItem from './TodoItem.jsx';
-import {toggleTodo, removeTodo} from '../actions.js';
 import {FilterTypes} from '../../constants.js';
 
-const TodoList = ({todos, onToggleTodo, onRemoveTodo}) => {
+const TodoList = ({todos}) => {
   return (
     <ul className="todo-list">
       {
         todos.map((item)=> (
           <TodoItem
             key={item.id}
+            id={item.id}
             text={item.text}
             completed={item.completed}
-            onToggle= {() => onToggleTodo(item.id)}
-            onRemove = {() => onRemoveTodo(item.id)}
           />
         ))
       }
@@ -27,8 +25,6 @@ const TodoList = ({todos, onToggleTodo, onRemoveTodo}) => {
 
 TodoList.propTypes = {
   todos: PropTypes.array.isRequired,
-  onToggleTodo: PropTypes.func.isRequired,
-  onRemoveTodo: PropTypes.func.isRequired
 };
 
 const selectVisibleTodos = (todos, filter) => {
@@ -65,15 +61,16 @@ const mapStateToProps = (state) => {
  *   };
  * };
  * */
-/* 
+/*
  * const mapDispatchToProps = (dispatch) => bindActionCreators({
  *   onToggleTodo: toggleTodo,
  *   onRemoveTodo: removeTodo
  * }, dispatch);*/
+/*
+ * const mapDispatchToProps = {
+ *   onToggleTodo: toggleTodo,
+ *   onRemoveTodo: removeTodo
+ * };
+ * */
 
-const mapDispatchToProps = {
-  onToggleTodo: toggleTodo,
-  onRemoveTodo: removeTodo
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TodoList);
+export default connect(mapStateToProps)(TodoList);
