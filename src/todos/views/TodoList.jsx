@@ -1,28 +1,54 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import TransitionGroup from 'react-addons-css-transition-group';
+import {spring, TransitionMotion} from 'react-motion';
 
 import TodoItem from './TodoItem.jsx';
 import {selectVisibleTodos} from '../selector.js';
-import './todoItem.css';
+
+const getStyles = (todos) => {
+  return todos.map(item => ({
+    key: item.id.toString(),
+    data: item,
+    style: {
+      height: spring(60),
+      opacity: spring(1)
+    }
+  })
+  );
+};
+
+const willEnter = () => {
+  return {
+    height: 0,
+    opacity: 0
+  };
+};
+
+const willLeave = () => {
+  return {
+    height: spring(0),
+    opacity: spring(0)
+  };
+};
 
 const TodoList = ({todos}) => {
+  const styles = getStyles(todos);
   return (
-    <ul className="todo-list">
-      <TransitionGroup transitionName="fade" transitionEnterTimeout={500} transitionLeaveTimeout={200}>
-        {
-          todos.map((item)=> (
-            <TodoItem
-              key={item.id}
-              id={item.id}
-              text={item.text}
-              completed={item.completed}
-            />
-          ))
-        }
-      </TransitionGroup>
-    </ul>
+    <TransitionMotion willLeave={willLeave} willEnter={willEnter} styles={styles}>
+    {
+      interpolatedStyles =>
+      <ul className="todo-list">
+          {
+            interpolatedStyles.map(config => {
+              const {data, style, key} = config;
+              const item = data;
+              return (<TodoItem style={style} key={key} id={item.id} text={item.text} completed={item.completed} />);
+            })
+          }
+      </ul>
+    }
+    </TransitionMotion>
   );
 };
 
